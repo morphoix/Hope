@@ -1,10 +1,10 @@
-import * as THREE from './three.module.js';
-import { OBJLoader } from './OBJLoader.js';
-import { DragControls } from './dragControls.js';
-import { Water } from './Water.js';
-import { EffectComposer } from './EffectComposer.js';
-import { RenderPass } from './RenderPass.js';
-import { UnrealBloomPass } from './UnrealBloomPass.js';
+import * as THREE from '/libs/three.module.js';
+import { OBJLoader } from '/libs/OBJLoader.js';
+import { DragControls } from '/libs/dragControls.js';
+import { Water } from '/libs/Water.js';
+import { EffectComposer } from '/libs/EffectComposer.js';
+import { RenderPass } from '/libs/RenderPass.js';
+import { UnrealBloomPass } from '/libs/UnrealBloomPass.js';
 
 let startButton = document.getElementById( 'startButton' );
 startButton.addEventListener( 'click', hide );
@@ -29,20 +29,20 @@ function init() {
 	//loading the objects
 	let onProgress = function ( xhr ) {
 	if ( xhr.lengthComputable ) {
-		let percentComplete = xhr.loaded / xhr.total * 100;
-		console.log( Math.round( percentComplete, 2 ) + '% downloaded' );
+			let percentComplete = xhr.loaded / xhr.total * 100;
+			console.log( Math.round( percentComplete, 2 ) + '% downloaded' );
 		}
 	};
 	let onError = function () {};
 	let manager = new THREE.LoadingManager();
 	//background
 	let urls = [
-	'heart/texture/px(2).jpg',
-	'heart/texture/nx(2).jpg',
-	'heart/texture/py(2).jpg',
-	'heart/texture/ny(2).jpg',
-	'heart/texture/pz(2).jpg',
-	'heart/texture/nz(2).jpg'
+		'px(2).jpg',
+		'nx(2).jpg',
+		'py(2).jpg',
+		'ny(2).jpg',
+		'pz(2).jpg',
+		'nz(2).jpg'
 	];
 	textureCube = new THREE.CubeTextureLoader( manager ).load( urls );
 	textureCube.mapping = THREE.CubeRefractionMapping;
@@ -77,7 +77,7 @@ function init() {
 	pointLight2 = new THREE.PointLight( 0x6800e0, 3 );
 	pointLight2.castShadow = true;
 
-    scene.add( shining, pointLight, pointLight2 );
+	scene.add( shining, pointLight, pointLight2 );
 	//HALL	
 	let hallGeometry = new THREE.SphereBufferGeometry( 3000, 100, 2, 2, 8, 3, 3 );
 	hall = new Water ( hallGeometry, {
@@ -89,18 +89,18 @@ function init() {
 	hall.receiveShadow = true;
 	scene.add( hall );
 	//Hope
-	let textureHope = new THREE.TextureLoader().load('heart/hope.png');
+	let textureHope = new THREE.TextureLoader().load('hope.png');
 	textureHope.wrapS = THREE.RepeatWrapping;
-    textureHope.wrapT = THREE.RepeatWrapping;
-    textureHope.repeat.set( 4, 1 );
+	textureHope.wrapT = THREE.RepeatWrapping;
+	textureHope.repeat.set( 4, 1 );
 
 	let cube = new THREE.SphereBufferGeometry( 60, 20, 20 );
 	let cubeMaterial = new THREE.MeshLambertMaterial( { 
-			color: 0xffffff,
-			refractionRatio: 0.95,
-			reflectivity: 0.3,
-			map: textureHope
-		} );
+		color: 0xffffff,
+		refractionRatio: 0.95,
+		reflectivity: 0.3,
+		map: textureHope
+	} );
 	let hope = new THREE.Mesh( cube, cubeMaterial);
 	hope.position.set ( 350, 100, -500 );
 	hope.castShadow = true;
@@ -116,7 +116,7 @@ function init() {
 
 	let objLoader = new OBJLoader( manager );
 	objLoader.setPath( '' );
-	objLoader.load( 'heart/heart.obj', function ( object ) {
+	objLoader.load( 'heart.obj', function ( object ) {
 		heart = object.children[ 0 ];
 		heart.scale.multiplyScalar( 22 );
 		heart.material = heartMaterial;
@@ -135,7 +135,7 @@ function init() {
 		envMap: textureCube } );
 	let objLoader2 = new OBJLoader( manager );
 	objLoader2.setPath( '' );
-	objLoader2.load( 'heart/chest.obj', function ( object ) {
+	objLoader2.load( 'chest.obj', function ( object ) {
 		chest = object.children[ 0 ];
 		chest.scale.multiplyScalar( 23 );
 		chest.material = chestMaterial;
@@ -166,10 +166,10 @@ function init() {
 	listener = new THREE.AudioListener();
 	sound = new THREE.Audio( listener );
 
-	audioLoader.load( 'heart/1.ogg', function( buffer ) {
-		sound.setBuffer( buffer );
-		sound.setLoop( true );
-		sound.setVolume( 1 );
+	audioLoader.load( '1.ogg', function( buffer ) {
+	sound.setBuffer( buffer );
+	sound.setLoop( true );
+	sound.setVolume( 1 );
 	});
 	camera.add( listener );
 	//poostprocessing
@@ -206,39 +206,39 @@ function init() {
 
 	initBones();
 	window.addEventListener( 'resize', onWindowResize, false );
-}
-function createArtery ( x, y, z ) {
-	let vein = new THREE.CylinderGeometry(
-	8, 8, 300, 10, 2, true );
-	let veinMaterial = new THREE.MeshLambertMaterial( { 
+	}
+	function createArtery ( x, y, z ) {
+		let vein = new THREE.CylinderGeometry(
+		8, 8, 300, 10, 2, true );
+		let veinMaterial = new THREE.MeshLambertMaterial( { 
 		color: 0xfcac0c, 
 		refractionRatio: 0.95,
 		reflectivity: 0.99,
 		skinning: true,
 		wireframe: true,
 		envMap: textureCube } );
-	let artery = new THREE.Mesh( vein, veinMaterial );
-	artery.position.set( x, y, z );
-	scene.add( artery );
-	return artery;
-}
-function createBigArtery ( x, y, z ) {
-	let vein2 = new THREE.CylinderGeometry(
-	16, 18, 400, 20, 2, true );
-	let arteryMaterial = new THREE.MeshLambertMaterial( { 
+		let artery = new THREE.Mesh( vein, veinMaterial );
+		artery.position.set( x, y, z );
+		scene.add( artery );
+		return artery;
+	}
+	function createBigArtery ( x, y, z ) {
+		let vein2 = new THREE.CylinderGeometry(
+		16, 18, 400, 20, 2, true );
+		let arteryMaterial = new THREE.MeshLambertMaterial( { 
 		color: 0x400cfc, 
 		refractionRatio: 0.95,
 		reflectivity: 0.99,
 		skinning: true,
 		wireframe: true,
 		envMap: textureCube } );
-	let bigArtery = new THREE.Mesh( vein2, arteryMaterial );
-	bigArtery.position.set( x, y, z );
-	scene.add( bigArtery );
-	return bigArtery;
-}
-function createGeometry( sizing ) {
-	let geometry = new THREE.CylinderBufferGeometry( 
+		let bigArtery = new THREE.Mesh( vein2, arteryMaterial );
+		bigArtery.position.set( x, y, z );
+		scene.add( bigArtery );
+		return bigArtery;
+	};
+	function createGeometry( sizing ) {
+		let geometry = new THREE.CylinderBufferGeometry( 
 		4, //radiusTop
 		4, //radiusBottom
 		sizing.height, //height
@@ -246,54 +246,54 @@ function createGeometry( sizing ) {
 		sizing.segmentCount * 3, //heightSegments 
 		false //openEnded
 		);
-	let position = geometry.attributes.position;
-	let vertex = new THREE.Vector3();
+		let position = geometry.attributes.position;
+		let vertex = new THREE.Vector3();
 
-	let skinIndices = [];
-	let skinWeights = [];
+		let skinIndices = [];
+		let skinWeights = [];
 
-	for ( let i = 0; i < position.count; i ++ ) {
-		vertex.fromBufferAttribute( position, i );
-		let y = ( vertex.y + sizing.halfHeight );
-		let skinIndex = Math.floor( y / sizing.segmentHeight );
-		let skinWeight = ( y % sizing.segmentHeight ) / sizing.segmentHeight;
-		skinIndices.push( skinIndex, skinIndex + 1, 0, 0 );
-		skinWeights.push( 1 - skinWeight, skinWeight, 0, 0 );
+		for ( let i = 0; i < position.count; i ++ ) {
+			vertex.fromBufferAttribute( position, i );
+			let y = ( vertex.y + sizing.halfHeight );
+			let skinIndex = Math.floor( y / sizing.segmentHeight );
+			let skinWeight = ( y % sizing.segmentHeight ) / sizing.segmentHeight;
+			skinIndices.push( skinIndex, skinIndex + 1, 0, 0 );
+			skinWeights.push( 1 - skinWeight, skinWeight, 0, 0 );
+		}
+		geometry.setAttribute( 'skinIndex', new THREE.Uint16BufferAttribute( skinIndices, 4 ) );
+		geometry.setAttribute( 'skinWeight', new THREE.Float32BufferAttribute( skinWeights, 4 ) );
+		return geometry;
 	}
-	geometry.setAttribute( 'skinIndex', new THREE.Uint16BufferAttribute( skinIndices, 4 ) );
-	geometry.setAttribute( 'skinWeight', new THREE.Float32BufferAttribute( skinWeights, 4 ) );
-	return geometry;
-}
-function createBones( sizing ) {
-	bones = [];
-	let prevBone = new THREE.Bone();
-	bones.push( prevBone );
-	prevBone.position.y = -sizing.halfHeight;
+	function createBones( sizing ) {
+		bones = [];
+		let prevBone = new THREE.Bone();
+		bones.push( prevBone );
+		prevBone.position.y = -sizing.halfHeight;
 
-	for ( let i = 0; i < segmentCount; i++) {
-		let bone = new THREE.Bone();
-		bone.position.y = sizing.segmentHeight + 5 ;
-		bones.push( bone );
-		prevBone.add( bone );
-		prevBone = bone;
+		for ( let i = 0; i < segmentCount; i++) {
+			let bone = new THREE.Bone();
+			bone.position.y = sizing.segmentHeight + 5 ;
+			bones.push( bone );
+			prevBone.add( bone );
+			prevBone = bone;
+		}
+		return bones;
 	}
-	return bones;
-}
-function initBones() {
-	let segmentHeight = 200;
-	let segmentCount = 5;
-	let height = segmentCount * segmentHeight;
-	let halfHeight = height * 0.5;
+	function initBones() {
+		let segmentHeight = 200;
+		let segmentCount = 5;
+		let height = segmentCount * segmentHeight;
+		let halfHeight = height * 0.5;
 
-	let sizing = {
-		segmentHeight: segmentHeight,
-		segmentCount: segmentCount,
-		height: height,
-		halfHeight: halfHeight
-	};
-	let geometry = createGeometry( sizing );
-	let bones = createBones( sizing );
-	let material = new THREE.MeshPhongMaterial( {
+		let sizing = {
+			segmentHeight: segmentHeight,
+			segmentCount: segmentCount,
+			height: height,
+			halfHeight: halfHeight
+		};
+		let geometry = createGeometry( sizing );
+		let bones = createBones( sizing );
+		let material = new THREE.MeshPhongMaterial( {
 					skinning: true,
 					color: 0xfcac0c,
 					emissive: 0x6b485b,
@@ -305,45 +305,45 @@ function initBones() {
 					flatShading: true
 				} );
 
-	for ( let i = 0; i < 85; i ++ ) {
-		let mesh = new THREE.SkinnedMesh( geometry, material);
-		let skeleton = new THREE.Skeleton( bones );
-		mesh.add( bones[ 0 ]);
-		mesh.bind( skeleton );
-		mesh.position.x = 300;
-		mesh.position.y = 100;
-		mesh.position.z = Math.random() * 5000 - 1000;
-		mesh.scale.multiplyScalar( 2 );
-		mesh.castShadow = true;
-		scene.add ( mesh );
+		for ( let i = 0; i < 85; i ++ ) {
+			let mesh = new THREE.SkinnedMesh( geometry, material);
+			let skeleton = new THREE.Skeleton( bones );
+			mesh.add( bones[ 0 ]);
+			mesh.bind( skeleton );
+			mesh.position.x = 300;
+			mesh.position.y = 100;
+			mesh.position.z = Math.random() * 5000 - 1000;
+			mesh.scale.multiplyScalar( 2 );
+			mesh.castShadow = true;
+			scene.add ( mesh );
+		}
 	}
-}
-function onWindowResize() {
-	camera.aspect = window.innerWidth / window.innerHeight;
-	camera.updateProjectionMatrix();
-	camera.lookAt( scene.position );
-	renderer.setSize( window.innerWidth, window.innerHeight );
-	composer.setSize( window.innerWidth, window.innerHeight );
-}
-function animate() {
-	requestAnimationFrame( animate );
-	render();
-}
-function render() {
-	let time = Date.now() * 0.0001;
-	for (let i = 0; i < bones.length; i++) {
-		bones[ i ].rotation.x = Math.sin( time ) * 2 / bones.length;
-		bones[ i ].rotation.y = Math.sin( time ) * 2 / bones.length;
-		bones[ i ].rotation.z = Math.sin( time ) * 2 / bones.length;
+	function onWindowResize() {
+		camera.aspect = window.innerWidth / window.innerHeight;
+		camera.updateProjectionMatrix();
+		camera.lookAt( scene.position );
+		renderer.setSize( window.innerWidth, window.innerHeight );
+		composer.setSize( window.innerWidth, window.innerHeight );
 	}
-	let lightTime = Date.now() * 0.0002;
-	let d = 600;
-	pointLight.position.x = Math.sin( lightTime * 0.7 ) * d;
-	pointLight.position.z = Math.cos( lightTime * 0.3 ) * d;
+	function animate() {
+		requestAnimationFrame( animate );
+		render();
+	}
+	function render() {
+		let time = Date.now() * 0.0001;
+		for (let i = 0; i < bones.length; i++) {
+			bones[ i ].rotation.x = Math.sin( time ) * 2 / bones.length;
+			bones[ i ].rotation.y = Math.sin( time ) * 2 / bones.length;
+			bones[ i ].rotation.z = Math.sin( time ) * 2 / bones.length;
+		}
+		let lightTime = Date.now() * 0.0002;
+		let d = 600;
+		pointLight.position.x = Math.sin( lightTime * 0.7 ) * d;
+		pointLight.position.z = Math.cos( lightTime * 0.3 ) * d;
 
-	hall.rotation.y += 0.001;
+		hall.rotation.y += 0.001;
 
-	composer.render();
+		composer.render();
 }
 init();
 animate();
